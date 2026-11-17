@@ -1,0 +1,21 @@
+{
+  "sandbox": {
+    "network": {
+      "vpcCidr": "10.0.0.0/16",
+      "maxAzs": 2,
+      "natGateways": 1
+    },
+    "pipeline": {
+      "owner": "alket-tegeria",
+      "deployBranch": "main",
+      "githubConnectionArn": "arn:aws:codeconnections:eu-north-1:188550350749:connection/f9e4f81d-a7ab-477c-815d-835635ef8996"
+    }
+  },
+  "staging": {},
+  "prod": {},
+  "availability-zones:account=188550350749:region=eu-north-1": [
+    "eu-north-1a",
+    "eu-north-1b",
+    "eu-north-1c"
+  ]
+}

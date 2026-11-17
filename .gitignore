@@ -1,0 +1,13 @@
+!jest.config.js
+node_modules
+ecr/build/*
+ecr/static/*
+.vscode
+.DS_Store
+
+# CDK asset staging directory
+.cdk.staging
+cdk.out
+handlerTest.ts
+.env*
+!.env.example
