@@ -15,7 +15,6 @@ export class HrmsSecrets extends Construct {
   constructor(scope: Construct, id: string, props: HrmsSecretsProps) {
     super(scope, id)
 
-
     const svcName = `${props.appName}-svc`
 
     const appSecret = new Secret(this, 'AppSecret', {

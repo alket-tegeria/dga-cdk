@@ -4,7 +4,7 @@ import {
   BuildSpec,
   ComputeType,
   HostKernel,
-  LinuxArmBuildImage,
+  LinuxBuildImage,
   PipelineProject,
   ProjectVisibility
 } from 'aws-cdk-lib/aws-codebuild'
@@ -99,7 +99,7 @@ export class HrmsPipeline extends Construct {
       environment: {
         privileged: true,
         hostKernel: HostKernel.LINUX_KERNEL_6,
-        buildImage: LinuxArmBuildImage.AMAZON_LINUX_2023_STANDARD_4_0,
+        buildImage: LinuxBuildImage.STANDARD_7_0,
         computeType: ComputeType.LARGE
       },
       description: `${svcName} code build project`,

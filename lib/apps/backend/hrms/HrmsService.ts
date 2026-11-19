@@ -6,9 +6,11 @@ import {
   type Cluster,
   Compatibility,
   ContainerImage,
+  CpuArchitecture,
   Secret as EcsSecret,
   FargateService,
   NetworkMode,
+  OperatingSystemFamily,
   PropagatedTagSource,
   TaskDefinition,
   TaskDefinitionRevision
@@ -84,6 +86,11 @@ export class HrmsService extends Construct {
       family: svcName,
       compatibility: Compatibility.FARGATE_AND_MANAGED_INSTANCES,
       networkMode: NetworkMode.AWS_VPC,
+
+      runtimePlatform: {
+        cpuArchitecture: CpuArchitecture.X86_64,
+        operatingSystemFamily: OperatingSystemFamily.LINUX
+      },
       cpu: '2048',
       memoryMiB: '7168',
       volumes: [
@@ -197,7 +204,11 @@ export class HrmsService extends Construct {
         service.loadBalancerTarget({ containerName: svcName, containerPort })
       ],
       healthCheck: {
-        path: '/ws/public/app/info',
+        path: '/login',
+        interval: Duration.seconds(30),
+        timeout: Duration.seconds(10),
+        healthyThresholdCount: 2,
+        unhealthyThresholdCount: 3,
         healthyHttpCodes: '200-399'
       }
     })
