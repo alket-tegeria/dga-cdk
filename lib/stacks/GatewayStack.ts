@@ -43,6 +43,12 @@ export class GatewayStack extends Stack {
       'http from vpc'
     )
 
+    albSecurityGroup.addIngressRule(
+      Peer.securityGroupId('sg-0913a2a8ca58f968a'),
+      Port.tcp(80),
+      'http from CloudFront VPC origin'
+    )
+
     const alb = new ApplicationLoadBalancer(this, 'Alb', {
       vpc,
       loadBalancerName: albName,

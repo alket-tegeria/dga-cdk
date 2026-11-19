@@ -43,7 +43,7 @@ export class HrmsServiceStack extends Stack {
       dbSecret: dbSecret,
       dbHost: db.instance.dbInstanceEndpointAddress,
       dbPort: db.instance.dbInstanceEndpointPort,
-      dbName: 'axelor',
+      dbName: 'app',
       cloudfrontUrl: cloudfrontUrl
     })
   }
