@@ -173,11 +173,11 @@ export class HrmsService extends Construct {
       capacityProviderStrategies: [
         {
           // Registered on the cluster by EcsStack
-          capacityProvider: `${cluster.clusterName}-mi-spot`,
+          capacityProvider: `FARGATE_SPOT`,
           weight: 1
         }
       ],
-      healthCheckGracePeriod: Duration.seconds(900),
+      healthCheckGracePeriod: Duration.seconds(1800),
       circuitBreaker: { enable: true, rollback: true },
       propagateTags: PropagatedTagSource.SERVICE,
       enableExecuteCommand: true
