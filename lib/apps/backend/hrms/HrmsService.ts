@@ -7,7 +7,7 @@ import {
   Compatibility,
   ContainerImage,
   CpuArchitecture,
-  Secret as EcsSecret,
+  type Secret as EcsSecret,
   FargateService,
   NetworkMode,
   OperatingSystemFamily,
@@ -29,7 +29,6 @@ import { PolicyStatement } from 'aws-cdk-lib/aws-iam'
 import { LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs'
 import { Construct } from 'constructs'
 import { HrmsPipeline } from './HrmsPipeline'
-import type { ISecret } from 'aws-cdk-lib/aws-secretsmanager'
 
 interface HrmsServiceProps {
   appName: string
@@ -38,10 +37,7 @@ interface HrmsServiceProps {
   albListener: ApplicationListener
   fileSystem: FileSystem
   repository: IRepository
-  dbSecret: ISecret
-  dbHost: string
-  dbPort: string
-  dbName: string
+  ecsAppSecrets: Record<string, EcsSecret>
   cloudfrontUrl: string
 }
 
@@ -56,10 +52,7 @@ export class HrmsService extends Construct {
       albListener,
       fileSystem,
       repository,
-      dbSecret,
-      dbHost,
-      dbPort,
-      dbName,
+      ecsAppSecrets,
       cloudfrontUrl
     } = props
 
@@ -115,25 +108,13 @@ export class HrmsService extends Construct {
         essential: true,
         portMappings: [{ containerPort }],
         environment: {
-          AXELOR_OPTS: '-Xmx2048m',
-          AXELOR_CONFIG_SESSION_COOKIE_SECURE: 'false',
-          AXELOR_CONFIG_DB_DEFAULT_DDL: 'update',
-          AXELOR_CONFIG_DB_DEFAULT_DRIVER: 'org.postgresql.Driver',
-          AXELOR_CONFIG_DB_DEFAULT_URL: `jdbc:postgresql://${dbHost}:${dbPort}/${dbName}`,
+          AXELOR_CONFIG: '/config/application.properties',
           AXELOR_CONFIG_APPLICATION_BASE_URL: cloudfrontUrl
         },
-        secrets: {
-          AXELOR_CONFIG_DB_DEFAULT_USER: EcsSecret.fromSecretsManager(
-            dbSecret,
-            'username'
-          ),
-          AXELOR_CONFIG_DB_DEFAULT_PASSWORD: EcsSecret.fromSecretsManager(
-            dbSecret,
-            'password'
-          )
-        },
+        secrets: ecsAppSecrets,
         logging: new AwsLogDriver({ streamPrefix: 'container', logGroup })
       })
+
       .addMountPoints({
         sourceVolume: 'uploads-data',
         containerPath: '/usr/local/tomcat/temp',

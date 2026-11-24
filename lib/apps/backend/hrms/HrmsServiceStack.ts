@@ -7,6 +7,7 @@ import type { Construct } from 'constructs'
 import { HrmsDb } from './HrmsDb'
 import { HrmsEcr } from './HrmsEcr'
 import { HrmsService } from './HrmsService'
+import { HrmsSecrets } from './HrmsSecrets'
 
 interface HrmsServiceStackProps extends StackProps {
   vpc: Vpc
@@ -24,14 +25,11 @@ export class HrmsServiceStack extends Stack {
 
     const appName = 'dga-hrms'
 
-    const db = new HrmsDb(this, 'Db', { vpc, appName })
-
-    const dbSecret = db.instance.secret
-    if (!dbSecret) {
-      throw new Error('Database secret was not created!')
-    }
+    new HrmsDb(this, 'Db', { vpc, appName })
 
     const ecr = new HrmsEcr(this, 'Ecr')
+
+    const secrets = new HrmsSecrets(this, 'Secrets', { appName })
 
     new HrmsService(this, 'Svc', {
       appName,
@@ -40,11 +38,8 @@ export class HrmsServiceStack extends Stack {
       albListener,
       fileSystem,
       repository: ecr.repository,
-      dbSecret: dbSecret,
-      dbHost: db.instance.dbInstanceEndpointAddress,
-      dbPort: db.instance.dbInstanceEndpointPort,
-      dbName: 'app',
-      cloudfrontUrl: cloudfrontUrl
+      ecsAppSecrets: secrets.ecsAppSecrets,
+      cloudfrontUrl
     })
   }
 }
