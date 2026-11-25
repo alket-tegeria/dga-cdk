@@ -52,8 +52,7 @@ export class HrmsService extends Construct {
       albListener,
       fileSystem,
       repository,
-      ecsAppSecrets,
-      cloudfrontUrl
+      ecsAppSecrets
     } = props
 
     const svcName = `${appName}-svc`
@@ -108,8 +107,7 @@ export class HrmsService extends Construct {
         essential: true,
         portMappings: [{ containerPort }],
         environment: {
-          AXELOR_CONFIG: '/config/application.properties',
-          AXELOR_CONFIG_APPLICATION_BASE_URL: cloudfrontUrl
+          AXELOR_CONFIG: '/config/application.properties'
         },
         secrets: ecsAppSecrets,
         logging: new AwsLogDriver({ streamPrefix: 'container', logGroup })
@@ -117,7 +115,7 @@ export class HrmsService extends Construct {
 
       .addMountPoints({
         sourceVolume: 'uploads-data',
-        containerPath: '/usr/local/tomcat/temp',
+        containerPath: '/uploads',
         readOnly: false
       })
 
@@ -152,7 +150,6 @@ export class HrmsService extends Construct {
       cluster,
       taskDefinition,
       taskDefinitionRevision: TaskDefinitionRevision.LATEST,
-      desiredCount: 1,
       minHealthyPercent: 100,
       maxHealthyPercent: 200,
       vpcSubnets: { subnetType: SubnetType.PRIVATE_WITH_EGRESS },
