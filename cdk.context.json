@@ -5,6 +5,10 @@
       "maxAzs": 2,
       "natGateways": 1
     },
+    "cdn": {
+      "certificateArn": "arn:aws:acm:us-east-1:188550350749:certificate/YOUR-NEW-CERTIFICATE-ID",
+      "domainNames": ["dga.digitalapps0.com"]
+    },
     "pipeline": {
       "owner": "alket-tegeria",
       "deployBranch": "main",
